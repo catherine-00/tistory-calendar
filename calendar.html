@@ -19,11 +19,12 @@
     }
     .month-name {
       font-weight: bold;
-      font-size: 18px;
+      font-size: 15px;
       margin-bottom: 0.5rem;
     }
     .weekdays {
       display: grid;
+      font-size: 10px;
       grid-template-columns: repeat(7, 1fr);
       text-align: center;
       margin-bottom: 0.5rem;
@@ -34,14 +35,14 @@
       gap: 4px;
     }
     .day {
-      width: 26px;              /* ✅ 가로 크기 줄임 */
-      height: 26px;             /* ✅ 세로 크기 줄임 */
+      width: 20px;              /* ✅ 가로 크기 줄임 */
+      height: 20px;             /* ✅ 세로 크기 줄임 */
       background-color: #fff;
       border: 1px solid #eee;
       border-radius: 4px;
       position: relative;
       text-align: center;
-      line-height: 26px;        /* ✅ 텍스트 중앙 맞춤 */
+      line-height: 20px;        /* ✅ 텍스트 중앙 맞춤 */
       font-size: 9px;           /* ✅ 숫자 크기도 소폭 줄임 */
     }
     .today {
@@ -82,7 +83,7 @@
 </head>
 <body>
 
-<h3>📅 2025 티스토리 포스팅 캘린더</h3>
+<h4>📅 2025 티스토리 포스팅 캘린더</h4>
 <div class="calendar-container" id="calendarContainer"></div>
 
 <script>
