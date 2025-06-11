@@ -8,3 +8,4 @@ git add --all
 git commit -m "$msg ($now)"
 git push
 
+

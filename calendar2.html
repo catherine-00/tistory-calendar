@@ -91,6 +91,7 @@
     const calendarContainer = document.getElementById('calendarContainer');
     const today = new Date().toISOString().slice(0, 10);
 
+
     function renderMonth(year, month) {
       const monthBlock = document.createElement('div');
       monthBlock.classList.add('month');
@@ -120,13 +121,18 @@
           const date = elem.dataset.date;
           const count = data[date] || 0;
           if (count > 0) {
+          
             elem.classList.add('posted');
             elem.setAttribute('data-info', `${count} post(s) on ${date}`);
           }
           if (date === today) elem.classList.add('today');
         });
-        const todayEl = document.querySelector('.day.today');
-        if (todayEl) todayEl.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        const todayMonth = Array.from(document.querySelectorAll('.month')).find(monthEl => {  
+          return monthEl.querySelector('.day.today');
+        });
+        if (todayMonth) todayMonth.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+
+
       })
       .catch(e => console.error(e));
   });
