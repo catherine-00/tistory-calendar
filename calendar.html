@@ -63,24 +63,26 @@
       z-index: 10;
     }
     .posted {
-      background-color: #80c080;
-      outline: 2px solid #008000;
+      /*background: linear-gradient(145deg, #00ffff 0%, #ff0066 100%);/* ✅ 그라데이션 적용 */
+      background:  linear-gradient(120deg, #00ffff 20%, #ff0066 80%);
+      outline: 2px solid #aaa;
       outline-offset: -2px;
     }
     .posted::after {
       content: "✓";
       color: white;
       font-weight: bold;
+      font-size: 14px;
       position: absolute;
-      top: 2px;
-      right: 2px;
-      font-size: 10px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);  /* ✅ 가운데 정렬 */
     }
   </style>
 </head>
 <body>
 
-<h2>📅 2025 티스토리 포스팅 캘린더</h2>
+<h3>📅 2025 티스토리 포스팅 캘린더</h3>
 <div class="calendar-container" id="calendarContainer"></div>
 
 <script>
@@ -88,7 +90,6 @@
     const calendarContainer = document.getElementById('calendarContainer');
     const today = new Date().toISOString().slice(0, 10);
 
-    // 2025년 전체 월 표시 설정
     function renderMonth(year, month) {
       const monthBlock = document.createElement('div');
       monthBlock.classList.add('month');
@@ -111,7 +112,6 @@
 
     for (let m = 0; m < 12; m++) renderMonth(2025, m);
 
-    // JSON 받아와 해당 날짜 스타일 채우기
     fetch("https://catherine-00.github.io/tistory-calendar/tistory_post_counts.json")
       .then(r => r.json())
       .then(data => {
@@ -124,7 +124,6 @@
           }
           if (date === today) elem.classList.add('today');
         });
-        // 오늘 위치로 스크롤
         const todayEl = document.querySelector('.day.today');
         if (todayEl) todayEl.scrollIntoView({ behavior: 'smooth', inline: 'center' });
       })
