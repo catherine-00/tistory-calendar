@@ -2,49 +2,134 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>티스토리 포스팅 캘린더</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cal-heatmap@4.4.1/dist/cal-heatmap.min.css" />
+  <title>티스토리 포스팅 캘린더 (2025)</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 2rem; }
+    body { font-family: Arial, sans-serif; padding: 1rem; }
+    .calendar-container {
+      display: flex;
+      gap: 2rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+      scroll-snap-type: x mandatory;
+      width: 100%;
+    }
+    .month {
+      flex: 0 0 auto;
+      scroll-snap-align: start;
+    }
+    .month-name {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 0.5rem;
+    }
+    .weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .day {
+      width: 30px;
+      height: 30px;
+      background-color: #fff;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      position: relative;
+      text-align: center;
+      line-height: 30px;
+      font-size: 10px;
+    }
+    .today {
+      outline: 2px solid #000;
+      outline-offset: 2px;
+    }
+    .day:hover::after {
+      content: attr(data-info);
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      white-space: nowrap;
+      z-index: 10;
+    }
+    .posted {
+      background-color: #80c080;
+      outline: 2px solid #008000;
+      outline-offset: -2px;
+    }
+    .posted::after {
+      content: "✓";
+      color: white;
+      font-weight: bold;
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 10px;
+    }
   </style>
 </head>
 <body>
 
-<h2>📅 나의 티스토리 글 기록</h2>
-<div id="tistory-calendar"></div>
+<h2>📅 2025 티스토리 포스팅 캘린더</h2>
+<div class="calendar-container" id="calendarContainer"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/cal-heatmap@4.4.1/dist/cal-heatmap.min.js"></script>
 <script>
-  fetch("https://catherine-00.github.io/tistory-calendar/tistory_post_counts.json")
-    .then(res => res.json())
-    .then(data => {
-      const cal = new CalHeatmap();
-      cal.paint({
-        itemSelector: "#tistory-calendar",
-        domain: "year",
-        subDomain: "day",
-        range: 1,
-        cellSize: 12,
-        verticalOrientation: true,
-        data: { source: data, x: "date", y: "count" },
-        scale: {
-          color: {
-            type: "quantize",
-            domain: [0, 1, 2, 3, 5],
-            scheme: "Greens"
+  document.addEventListener('DOMContentLoaded', () => {
+    const calendarContainer = document.getElementById('calendarContainer');
+    const today = new Date().toISOString().slice(0, 10);
+
+    // 2025년 전체 월 표시 설정
+    function renderMonth(year, month) {
+      const monthBlock = document.createElement('div');
+      monthBlock.classList.add('month');
+      monthBlock.innerHTML = `<div class="month-name">${month+1}월</div>`;
+      const weekdays = ['월','화','수','목','금','토','일'];
+      monthBlock.insertAdjacentHTML('beforeend', '<div class="weekdays">' + weekdays.map(d => `<div>${d}</div>`).join('') + '</div>');
+      const grid = document.createElement('div');
+      grid.classList.add('calendar-grid');
+      const firstDay = new Date(year, month, 1);
+      const offset = (firstDay.getDay() + 6) % 7;
+      for (let i = 0; i < offset; i++) grid.innerHTML += '<div class="day"></div>';
+      const days = new Date(year, month+1, 0).getDate();
+      for (let d = 1; d <= days; d++) {
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        grid.innerHTML += `<div class="day" data-date="${dateStr}">${d}</div>`;
+      }
+      monthBlock.appendChild(grid);
+      calendarContainer.appendChild(monthBlock);
+    }
+
+    for (let m = 0; m < 12; m++) renderMonth(2025, m);
+
+    // JSON 받아와 해당 날짜 스타일 채우기
+    fetch("https://catherine-00.github.io/tistory-calendar/tistory_post_counts.json")
+      .then(r => r.json())
+      .then(data => {
+        document.querySelectorAll('.day[data-date]').forEach(elem => {
+          const date = elem.dataset.date;
+          const count = data[date] || 0;
+          if (count > 0) {
+            elem.classList.add('posted');
+            elem.setAttribute('data-info', `${count} post(s) on ${date}`);
           }
-        },
-        tooltip: {
-          enabled: true,
-          text: function(date, value) {
-            return `${date.toISOString().slice(0, 10)}: ${value || 0} post(s)`;
-          }
-        }
-      });
-    })
-    .catch((error) => {
-      console.error("🚨 JSON 로딩 실패:", error);
-    });
+          if (date === today) elem.classList.add('today');
+        });
+        // 오늘 위치로 스크롤
+        const todayEl = document.querySelector('.day.today');
+        if (todayEl) todayEl.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+      })
+      .catch(e => console.error(e));
+  });
 </script>
 
 </body>
