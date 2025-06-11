@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>티스토리 포스팅 캘린더</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cal-heatmap@4.4.1/dist/cal-heatmap.min.css" />
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2rem; }
+  </style>
+</head>
+<body>
+
+<h2>📅 나의 티스토리 글 기록</h2>
+<div id="tistory-calendar"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/cal-heatmap@4.4.1/dist/cal-heatmap.min.js"></script>
+<script>
+  fetch("https://catherine-00.github.io/tistory-calendar/tistory_post_counts.json")
+    .then(res => res.json())
+    .then(data => {
+      const cal = new CalHeatmap();
+      cal.paint({
+        itemSelector: "#tistory-calendar",
+        domain: "year",
+        subDomain: "day",
+        range: 1,
+        cellSize: 12,
+        verticalOrientation: true,
+        data: { source: data, x: "date", y: "count" },
+        scale: {
+          color: {
+            type: "quantize",
+            domain: [0, 1, 2, 3, 5],
+            scheme: "Greens"
+          }
+        },
+        tooltip: {
+          enabled: true,
+          text: function(date, value) {
+            return `${date.toISOString().slice(0, 10)}: ${value || 0} post(s)`;
+          }
+        }
+      });
+    })
+    .catch((error) => {
+      console.error("🚨 JSON 로딩 실패:", error);
+    });
+</script>
+
+</body>
+</html>
