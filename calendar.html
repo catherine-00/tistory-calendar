@@ -7,7 +7,7 @@
     body { font-family: Arial, sans-serif; padding: 1rem; }
     .calendar-container {
       display: flex;
-      gap: 2rem;
+      gap: 1.2rem; /* ✅ 간격 살짝 줄임 */
       overflow-x: auto;
       padding-bottom: 1rem;
       scroll-snap-type: x mandatory;
@@ -34,15 +34,15 @@
       gap: 4px;
     }
     .day {
-      width: 30px;
-      height: 30px;
+      width: 26px;              /* ✅ 가로 크기 줄임 */
+      height: 26px;             /* ✅ 세로 크기 줄임 */
       background-color: #fff;
       border: 1px solid #eee;
       border-radius: 4px;
       position: relative;
       text-align: center;
-      line-height: 30px;
-      font-size: 10px;
+      line-height: 26px;        /* ✅ 텍스트 중앙 맞춤 */
+      font-size: 9px;           /* ✅ 숫자 크기도 소폭 줄임 */
     }
     .today {
       outline: 2px solid #000;
@@ -72,7 +72,7 @@
       content: "✓";
       color: white;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 12px;          /* ✅ 체크마크 크기도 줄임 */
       position: absolute;
       top: 50%;
       left: 50%;
