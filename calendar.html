@@ -113,7 +113,7 @@
 
     for (let m = 0; m < 12; m++) renderMonth(2025, m);
 
-    fetch("https://catherine-00.github.io/tistory-calendar/tistory_post_counts.json")
+    fetch("https://catherine-00.github.io/tistory-calendar/date/final_date.json")
       .then(r => r.json())
       .then(data => {
         document.querySelectorAll('.day[data-date]').forEach(elem => {
