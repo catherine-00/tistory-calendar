@@ -89,7 +89,9 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const calendarContainer = document.getElementById('calendarContainer');
-    const today = new Date().toISOString().slice(0, 10);
+    const koreaNow = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+    const today = koreaNow.toISOString().slice(0, 10);
+
 
     function renderMonth(year, month) {
       const monthBlock = document.createElement('div');
