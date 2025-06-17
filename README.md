@@ -21,9 +21,9 @@
 ## 티스토리에 iframe 형식으로 삽입하는 코드
 ```html
 <iframe 
-  src="깃허브의 calendar.html 주소" 
+  src=" https://catherine-00.github.io/tistory-calendar/calendar.html" 
   width="100%" 
-  height="600"       <!-- ✅ 추천: 270~300px 사이 -->
+  height="350"       <!-- ✅ 추천: 270~300px 사이 -->
   style="border: none;"
 ></iframe>
 
