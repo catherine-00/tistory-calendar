@@ -1,18 +1,18 @@
 # tistory-calendar 
 
-## 티스토리 백업 파일에서 날짜 읽어오기
+## 티스토리 백업 파일에서 날짜 읽어오기(한달에 한 번씩)
 1. post_date.ipynb 실행
 2. backup_date.json 파일 생성
 
 
-## 최신 포스팅 글 날짜 읽어오기(공개 글만)
-1. `rss_parser.py` 실행
-2. `tistory_post_counts.json` 만들어짐
+------------------------------------------------------------------
+
+## 최신 포스팅 글 날짜 읽어오기(공개 글만)(주기적으로)
+1. `rss_parser.py` 실행 ==> `tistory_post_counts.json` 만들어짐
 
 
 ## 백업 파일의 날짜와 최신 날짜 합치기
-1. merge_posts.ipynb 실행
-2. final_date.json 생성
+1. `merge_posts.ipynb` 실행 ==> `final_date.json` 생성
 
 ## 2. `final_date.json` git push 하기
 - 이러면 티스토리 사이드바 업데이트됨
