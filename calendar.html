@@ -2,12 +2,33 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>티스토리 포스팅 캘린더 (2025)</title>
+  <title>티스토리 포스팅 캘린더</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 1rem; }
+
+    /* ✅ 연도 버튼 UI */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+    .year-btn {
+      border: 1px solid #ddd;
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .year-btn.active {
+      border-color: #000;
+      font-weight: 700;
+    }
+
     .calendar-container {
       display: flex;
-      gap: 1.2rem; /* ✅ 간격 살짝 줄임 */
+      gap: 1.2rem;
       overflow-x: auto;
       padding-bottom: 1rem;
       scroll-snap-type: x mandatory;
@@ -35,15 +56,15 @@
       gap: 4px;
     }
     .day {
-      width: 20px;              /* ✅ 가로 크기 줄임 */
-      height: 20px;             /* ✅ 세로 크기 줄임 */
+      width: 20px;
+      height: 20px;
       background-color: #fff;
       border: 1px solid #eee;
       border-radius: 4px;
       position: relative;
       text-align: center;
-      line-height: 20px;        /* ✅ 텍스트 중앙 맞춤 */
-      font-size: 9px;           /* ✅ 숫자 크기도 소폭 줄임 */
+      line-height: 20px;
+      font-size: 9px;
     }
     .today {
       outline: 2px solid #000;
@@ -64,8 +85,7 @@
       z-index: 10;
     }
     .posted {
-      /*background: linear-gradient(145deg, #00ffff 0%, #ff0066 100%);/* ✅ 그라데이션 적용 */
-      background:  linear-gradient(120deg, #00ffff 20%, #ff0066 80%);
+      background: linear-gradient(120deg, #00ffff 20%, #ff0066 80%);
       outline: 2px solid #aaa;
       outline-offset: -2px;
     }
@@ -73,69 +93,127 @@
       content: "✓";
       color: white;
       font-weight: bold;
-      font-size: 12px;          /* ✅ 체크마크 크기도 줄임 */
+      font-size: 12px;
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);  /* ✅ 가운데 정렬 */
+      transform: translate(-50%, -50%);
     }
   </style>
 </head>
 <body>
 
-<h4>📅 2025 티스토리 포스팅 캘린더</h4>
+<h4 id="title">📅 티스토리 포스팅 캘린더</h4>
+
+<!-- ✅ 연도 버튼 -->
+<div class="toolbar" id="toolbar">
+  <button class="year-btn" data-year="2025">2025</button>
+  <button class="year-btn" data-year="2026">2026</button>
+</div>
+
 <div class="calendar-container" id="calendarContainer"></div>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const calendarContainer = document.getElementById('calendarContainer');
-    const koreaNow = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
-    const today = koreaNow.toISOString().slice(0, 10);
+    const titleEl = document.getElementById('title');
+    const toolbar = document.getElementById('toolbar');
 
+    const koreaNow = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+    const today = koreaNow.toISOString().slice(0, 10); // YYYY-MM-DD
+
+    // ✅ 연도별 JSON 매핑 (원하시면 파일명 규칙에 맞춰 바꿔드릴게요)
+    const dataUrlByYear = {
+      2025: "https://catherine-00.github.io/tistory-calendar/date/final_date.json",
+      2026: "https://catherine-00.github.io/tistory-calendar/date/final_date.json",
+    };
 
     function renderMonth(year, month) {
       const monthBlock = document.createElement('div');
       monthBlock.classList.add('month');
-      monthBlock.innerHTML = `<div class="month-name">${month+1}월</div>`;
+      monthBlock.innerHTML = `<div class="month-name">${month + 1}월</div>`;
+
       const weekdays = ['월','화','수','목','금','토','일'];
-      monthBlock.insertAdjacentHTML('beforeend', '<div class="weekdays">' + weekdays.map(d => `<div>${d}</div>`).join('') + '</div>');
+      monthBlock.insertAdjacentHTML(
+        'beforeend',
+        '<div class="weekdays">' + weekdays.map(d => `<div>${d}</div>`).join('') + '</div>'
+      );
+
       const grid = document.createElement('div');
       grid.classList.add('calendar-grid');
+
       const firstDay = new Date(year, month, 1);
-      const offset = (firstDay.getDay() + 6) % 7;
+      const offset = (firstDay.getDay() + 6) % 7; // 월요일 시작
       for (let i = 0; i < offset; i++) grid.innerHTML += '<div class="day"></div>';
-      const days = new Date(year, month+1, 0).getDate();
+
+      const days = new Date(year, month + 1, 0).getDate();
       for (let d = 1; d <= days; d++) {
-        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dateStr = `${year}-${String(month + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
         grid.innerHTML += `<div class="day" data-date="${dateStr}">${d}</div>`;
       }
+
       monthBlock.appendChild(grid);
       calendarContainer.appendChild(monthBlock);
     }
 
-    for (let m = 0; m < 12; m++) renderMonth(2025, m);
+    async function loadYear(year) {
+      // UI 상태
+      titleEl.textContent = `📅 ${year} 티스토리 포스팅 캘린더`;
+      toolbar.querySelectorAll('.year-btn').forEach(btn => {
+        btn.classList.toggle('active', Number(btn.dataset.year) === Number(year));
+      });
 
-    fetch("https://catherine-00.github.io/tistory-calendar/date/final_date.json")
-      .then(r => r.json())
-      .then(data => {
+      // 캘린더 초기화 후 렌더
+      calendarContainer.innerHTML = '';
+      for (let m = 0; m < 12; m++) renderMonth(year, m);
+
+      // 데이터 URL 확인
+      const url = dataUrlByYear[year];
+      if (!url) {
+        console.error("No data URL for year:", year);
+        return;
+      }
+
+      try {
+        const data = await fetch(url).then(r => r.json());
+
+        // 날짜 채우기 + 오늘 표시(선택된 연도와 오늘 연도 일치할 때만)
         document.querySelectorAll('.day[data-date]').forEach(elem => {
           const date = elem.dataset.date;
           const count = data[date] || 0;
+
           if (count > 0) {
-          
             elem.classList.add('posted');
             elem.setAttribute('data-info', `${count} post(s) on ${date}`);
           }
-          if (date === today) elem.classList.add('today');
-        });
-        const todayMonth = Array.from(document.querySelectorAll('.month')).find(monthEl => {  
-          return monthEl.querySelector('.day.today');
-        });
-        if (todayMonth) todayMonth.scrollIntoView({ behavior: 'smooth', inline: 'center' });
 
+          if (date === today && today.startsWith(`${year}-`)) {
+            elem.classList.add('today');
+          }
+        });
 
-      })
-      .catch(e => console.error(e));
+        // 오늘이 선택된 연도에 속하면 해당 월로 스크롤
+        if (today.startsWith(`${year}-`)) {
+          const todayMonth = Array.from(document.querySelectorAll('.month')).find(monthEl => {
+            return monthEl.querySelector('.day.today');
+          });
+          if (todayMonth) todayMonth.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // 버튼 클릭 이벤트
+    toolbar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.year-btn');
+      if (!btn) return;
+      loadYear(Number(btn.dataset.year));
+    });
+
+    // 초기 연도: 오늘 기준 연도가 있으면 그 연도, 없으면 2025
+    const initialYear = dataUrlByYear[new Date(today).getFullYear()] ? new Date(today).getFullYear() : 2025;
+    loadYear(initialYear);
   });
 </script>
 
